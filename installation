@@ -1,0 +1,63 @@
+#!/bin/bash
+
+install_packages()
+{
+apt install sudo unzip git -y
+}
+
+install_exe_cheat()
+{
+wget https://github.com/cheat/cheat/releases/download/4.2.3/cheat-linux-amd64.gz
+gunzip cheat-linux-amd64.gz
+chmod +x cheat-linux-amd64
+./cheat-linux-amd64
+mv cheat-linux-amd64 /usr/local/bin/cheat
+}
+
+
+create_group()
+{
+groupadd Commun
+chgrp Commun /root/.config/cheat/cheatsheets/personal
+}
+
+
+uninstall_exe_cheat()
+{
+rm -fv /usr/local/bin/cheat
+}
+
+remove_cheatsheets()
+{
+rm -rf /root/.config/cheat
+}
+
+remove_group()
+{
+groupdel Commun
+}
+
+
+if [ $# -eq 0 ]
+then
+echo "Erreur de syntaxe"
+echo "Usage: $0 -i (install)"
+echo "Usage: $0 -u (uninstall)"
+exit
+fi
+
+param="$1"
+if [ "$param" = "-u" ]
+then
+echo "Uninstall start"
+uninstall_exe_cheat
+remove_cheatsheets
+remove_group
+fi
+if [ "$param" = "-i" ]
+then
+echo "Install start"
+install_packages
+install_exe_cheat
+create_group
+fi
